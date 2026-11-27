@@ -8,8 +8,8 @@ Front Runner is a presidential campaign game that runs in your browser, on a pho
 
 ## What's in it
 
-- **The 2028 race** with fictional candidates, plus eight real elections replayed with the real candidates and state results: 1948, 1960, 1968, 1976, 1980, 1992 and 2000.
-- **Third-party campaigns.** Run as George Wallace (1968), John Anderson (1980), Ross Perot (1992) or Ralph Nader (2000), each with goals based on what the campaign was really trying to do.
+- **The 2028 race** with fictional candidates, plus seven real elections replayed with the real candidates and state results: 1948, 1960, 1968, 1976, 1980, 1992 and 2000.
+- **Third-party campaigns.** Run as Strom Thurmond (1948), George Wallace (1968), John Anderson (1980), Ross Perot (1992) or Ralph Nader (2000), each with goals based on what the campaign was really trying to do.
 - **Two ways to play.**
   - **Quick:** one decision and one campaign stop a turn.
   - **Full campaign:** the hard mode. Every week you plan a schedule for you and your running mate, buy ads, open field offices, raise money and prep for debates that go round by round.

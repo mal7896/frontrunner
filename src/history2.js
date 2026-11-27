@@ -8,7 +8,6 @@ Object.assign(HISTORY, {
     blurb: 'Truman is behind in every poll, and his party has split three ways.',
     open: 'Labor Day, 1948. President Truman trails in every major poll. Southern Democrats walked out of his convention to back Strom Thurmond, and former vice president Henry Wallace is running on the left. Gov. Thomas Dewey of New York, who ran against Roosevelt four years ago, is campaigning as if the race is already won.',
     startNat: -5.0, tide: [0.4, 0.6, 0.8, 0.8, 0.9, 1.0, 1.1, 1.1, 1.2, 1.5],
-    locked: { label: 'Thurmond states', short: 'Thurmond', who: 'Strom Thurmond of the States\' Rights Democrats', note: 'Strom Thurmond\'s States\' Rights Democrats carried Alabama, Louisiana, Mississippi and South Carolina, 38 electoral votes. Truman was not even on the ballot in Alabama. Those states are locked.' },
     actual: { D: 303, R: 189, other: 39, otherName: 'Thurmond', pvD: 49.51, pvR: 45.12, winner: 'D', third: 'Thurmond, Wallace and others',
       note: 'Truman won 303 electoral votes to Dewey\'s 189. Thurmond won 39, including one Tennessee elector who had been pledged to Truman. Nearly every poll had predicted a Dewey win.' },
     cands: {

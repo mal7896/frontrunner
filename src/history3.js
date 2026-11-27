@@ -8,6 +8,95 @@
 //   q       how hard the two major parties squeeze the campaign each week (same units as choices)
 // Goals are checked on the final count. The first goal decides whether the campaign succeeded.
 const THIRD = {
+  1948: {
+    cand: { id: 'thurmond', first: 'Strom', last: 'Thurmond', ini: 'ST', title: 'Governor of South Carolina', home: 'SC', perk: 'steady', perkText: 'Disciplined campaign: risky moves backfire less often',
+      bio: 'Governor of South Carolina, running against Truman\'s civil rights program on a segregationist "states\' rights" platform.' },
+    vp: { id: 'fwright', first: 'Fielding', last: 'Wright', ini: 'FW', title: 'Governor of Mississippi', home: 'MS' },
+    label: 'States\' Rights Democratic', start: 3.0, scale: 1.0, q: .28,
+    tide: [0, -.05, -.05, -.1, -.05, -.05, -.05, -.1, -.1, -.04],
+    a: { NE: .7, MW: .7, SO: .85, WE: .7 },
+    offBallot: { D: ['AL'] },
+    blurb: 'You can also run as Strom Thurmond, the Dixiecrat.',
+    note: 'Strom Thurmond\'s States\' Rights Democrats, the "Dixiecrats," are on the ballot across much of the South, and in four states as the official Democratic ticket. His support follows its real path, and the votes he gains or loses come mostly out of Truman\'s column. Truman is not on the ballot in Alabama.',
+    goals: [
+      { kind: 'house', text: 'Keep Truman and Dewey both short of a majority and send the election to the House', short: 'deny both men a majority', done: 'Neither major candidate won a majority.' },
+      { kind: 'ev', val: 38, text: 'Win at least 38 electoral votes, as Thurmond did', short: 'win 38 electoral votes' },
+      { kind: 'stateN', val: 15, n: 8, text: 'Win at least 15 percent in eight states (he did it in seven)', short: 'win 15 percent in eight states' }],
+    level: 'Very hard',
+    actual: { pv: 2.41, ev: 39, states: 4, note: 'Thurmond won 2.4 percent nationally and carried Alabama, Louisiana, Mississippi and South Carolina. A Tennessee elector pledged to Truman also voted for him, for 39 in all. Truman still won 303 electoral votes.' },
+    turns: [
+      { date: '1948-09-06', cat: 'Labor Day', title: 'Running as the Democrat in the South',
+        body: 'You and Gov. Fielding Wright of Mississippi lead the States\' Rights Democrats, the "Dixiecrats." Your plan is to be listed as the official Democratic ticket in as many Southern states as you can, so lifelong Democrats can vote for you without leaving their party.',
+        options: [
+          { t: 'Fight state by state for the Democratic line on the ballot', s: 'the ballot fight', fx: { SO: .5 }, h: true },
+          { t: 'Run as a separate party everywhere', s: 'a separate line', fx: { SO: .15, nat: .1 } },
+          { t: 'Open with a speaking tour of Texas', s: 'the Texas tour', fx: { SO: .3 } }],
+        hist: 'The Dixiecrats took over the Democratic Party in Alabama, Louisiana, Mississippi and South Carolina, where Thurmond appeared on the ballot as the Democratic candidate. In Alabama, Truman was not on the ballot at all.' },
+      { date: '1948-09-18', cat: 'Money', topic: 'money', title: 'Running on a shoestring',
+        body: 'Big Southern donors are holding back, and the national press treats your campaign as a sideshow.',
+        options: [
+          { t: 'Pass the hat at rallies and courthouse meetings', s: 'passing the hat', fx: { SO: .3 } },
+          { t: 'Spend what you have on radio time across the South', s: 'Southern radio', fx: { SO: .25, nat: .05 } },
+          { t: 'Court oil and business money in Texas', s: 'Texas money', risk: { p: .45, win: { SO: .4 }, lose: { SO: -.1 }, winNote: 'A few big checks came in.', loseNote: 'Texas money stayed with Truman.' } }],
+        hist: 'The Dixiecrats ran on a small fraction of the money the two major parties spent.' },
+      { date: '1948-09-27', cat: 'Texas', topic: 'Texas', title: 'Truman\'s train crosses Texas',
+        body: 'Truman is spending several days whistle-stopping through Texas with the state\'s Democratic leaders at his side. Texas is the biggest prize in the South.',
+        options: [
+          { t: 'Follow his train with rallies of your own', s: 'following the train', fx: { SO: .3 } },
+          { t: 'Leave Texas to Truman and work the Deep South', s: 'the Deep South', fx: { SO: .25 } },
+          { t: 'Go after the Texas leaders who stood with Truman', s: 'attacking the Texans', risk: { p: .35, win: { SO: .4 }, lose: { SO: -.15 }, winNote: 'The attack drew big crowds.', loseNote: 'Texas Democrats closed ranks around Truman.' } }],
+        hist: 'Truman crossed Texas by train in late September with Speaker Sam Rayburn. Texas stayed loyal: Truman won it with 65 percent, and Thurmond won 9.' },
+      { date: '1948-10-04', cat: 'Party leaders', topic: 'Southern leaders', title: 'Southern leaders keep their distance',
+        body: 'Most Southern senators and congressmen won\'t endorse you. If they break with the national party, they could lose their seniority in Congress.',
+        options: [
+          { t: 'Call them out by name', s: 'calling them out', risk: { p: .35, win: { SO: .35 }, lose: { SO: -.2 }, winNote: 'A few came over, and the voters noticed.', loseNote: 'It made you look isolated.' } },
+          { t: 'Leave them alone and appeal to voters directly', s: 'going to the voters', fx: { SO: .25 }, h: true },
+          { t: 'Ask a few of them to stay quietly neutral', s: 'quiet neutrality', fx: { SO: .15, nat: .05 } }],
+        hist: 'Most Southern members of Congress stayed with the national party or kept quiet, partly to protect their seniority.' },
+      { date: '1948-10-09', cat: 'Message', topic: 'the message', title: 'What to run on',
+        body: 'Your campaign is built on opposing Truman\'s civil rights program, which would make lynching a federal crime, ban the poll tax and outlaw job discrimination. Your advisers want to know whether to keep it the whole message or broaden it.',
+        options: [
+          { t: 'Keep the whole campaign on "states\' rights" against Washington', s: '"states\' rights"', fx: { SO: .35 }, h: true },
+          { t: 'Broaden it to attack Truman on spending and the economy', s: 'spending', fx: { SO: .15, nat: .15 } },
+          { t: 'Talk up your own record as governor', s: 'your record', fx: { nat: .1, SO: .1 } }],
+        hist: 'Thurmond campaigned against Truman\'s civil rights program as federal overreach. The party\'s platform openly defended racial segregation.' },
+      { date: '1948-10-12', cat: 'Radio', topic: 'the radio address', title: 'A night on the radio',
+        body: 'You can afford one big radio buy this month. The question is the audience.',
+        options: [
+          { t: 'Buy a national address', s: 'the national address', fx: { nat: .2 } },
+          { t: 'Stick to Southern stations, night after night', s: 'Southern stations', fx: { SO: .3 } },
+          { t: 'Send Wright to speak in the border states', s: 'Wright\'s tour', fx: { SO: .2, MW: .05 } }] },
+      { date: '1948-10-18', cat: 'The polls', topic: 'the strategy', title: 'The pollsters ignore you',
+        body: 'National polls give you a few percent and a handful of states. Your real hope is that enough Southern states keep both men short of a majority.',
+        options: [
+          { t: 'Tell voters a States\' Rights vote forces both parties to bargain', s: 'the bargaining pitch', fx: { SO: .3 }, h: true },
+          { t: 'Predict you will carry the whole South', s: 'the big prediction', risk: { p: .4, win: { SO: .4 }, lose: { SO: -.15 }, winNote: 'The confidence caught on.', loseNote: 'Reporters laughed it off.' } },
+          { t: 'Spend the week in Georgia and Arkansas', s: 'Georgia and Arkansas', fx: { SO: .3 } }],
+        hist: 'The Dixiecrats\' real aim was to deny Truman an electoral majority and send the election to the House of Representatives, where the South could bargain.' },
+      { date: '1948-10-22', cat: 'Final push', topic: 'the final push', title: 'Where to finish',
+        body: 'You\'re strong in the Deep South. Georgia, Arkansas, Florida and Tennessee are within reach only if something breaks your way.',
+        options: [
+          { t: 'Barnstorm Georgia', s: 'Georgia', fx: { SO: .35 } },
+          { t: 'Spread out across Florida and Tennessee', s: 'Florida and Tennessee', fx: { SO: .25, nat: .05 } },
+          { t: 'Defend Louisiana, the closest of your strong states', s: 'Louisiana', fx: { SO: .3 } }],
+        hist: 'Thurmond\'s best showing outside the four states he carried was Georgia, where he won about 20 percent.' },
+      { date: '1948-10-29', cat: 'Civil rights', topic: 'civil rights', title: 'Truman goes to Harlem',
+        body: 'Truman has become the first president to campaign in Harlem, where he defended his civil rights program before a huge crowd.',
+        options: [
+          { t: 'Make it the subject of your last Southern radio ads', s: 'the last ads', fx: { SO: .3 } },
+          { t: 'Stay on "states\' rights" and don\'t mention it', s: 'staying the course', fx: { SO: .15 } },
+          { t: 'Warn voters everywhere about Truman\'s spending', s: 'spending', fx: { nat: .1 } }],
+        hist: 'On Oct. 29 Truman spoke in Harlem, the first president to campaign there, and defended his civil rights program.' },
+      { date: '1948-11-01', cat: 'Closing argument', title: 'Election eve',
+        body: 'One day left. Four states look safe for you, and a few more could keep both men short of a majority.',
+        options: [
+          { t: 'Last rallies in South Carolina and Mississippi', s: 'the home states', fx: { SO: .3 } },
+          { t: 'A final radio appeal to Southern Democrats', s: 'the radio appeal', fx: { SO: .25, nat: .05 } },
+          { t: 'Ask voters to send the election to the House', s: 'the House pitch', fx: { SO: .25 } }],
+        hist: 'Thurmond won Alabama, Louisiana, Mississippi and South Carolina, 38 electoral votes, plus one from a Tennessee elector. Truman still won 303 and kept the presidency.' }
+    ]
+  },
+
   1968: {
     cand: { id: 'wallace', first: 'George', last: 'Wallace', ini: 'GW', title: 'Former Governor of Alabama', home: 'AL', perk: 'visits', perkText: 'Fiery stump speaker: every stop counts 25% more',
       bio: 'Segregationist former governor of Alabama, running on law and order and anger at Washington.' },
@@ -280,6 +369,7 @@ const THIRD = {
     label: 'Green', start: 4.0, scale: 2.0, q: .15,
     tide: [.2, -.2, -.2, .1, .2, -.1, .2, -.4, -.4, -.66],
     a: { NE: .7, MW: .7, SO: .66, WE: .7 },
+    offBallot: { T: ['NC', 'OK', 'SD'] },
     blurb: 'You can also run as Ralph Nader, the Green Party nominee.',
     note: 'Green Party nominee Ralph Nader is on the ballot in most states. His support follows its real path. Most of the votes he gains or loses come out of Gore\'s column.',
     goals: [

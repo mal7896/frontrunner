@@ -8,7 +8,7 @@ const DIM_F = [1, .6, .35, .2];
 const DONOR_STATES = ['CA', 'NY', 'TX', 'FL', 'IL', 'MA', 'NJ', 'CT', 'WA', 'DC'];
 // Campaign money is tracked in 2028 dollars and shown in the dollars of the year being played.
 const MONEY_SCALE = { 2028: 1, 2000: .55, 1992: .4, 1980: .3, 1976: .22, 1968: .15, 1960: .1, 1948: .06 };
-const FUND_OF = { perot: 1.8, nader: .35, anderson: .5, wallace: .7 };
+const FUND_OF = { perot: 1.8, nader: .35, anderson: .5, wallace: .7, thurmond: .45 };
 // Share of each state's vote cast early, by turn. Before the 1990s almost everyone voted on Election Day.
 const BANK_OF = { 2028: [0, 0, 0, 0, .03, .07, .09, .10, .11, .11], 2000: [0, 0, 0, 0, 0, 0, .02, .03, .04, .05], 1992: [0, 0, 0, 0, 0, 0, 0, .02, .02, .03] };
 const AI_SD_F = { easy: 3.0, normal: 1.6, hard: 0.9, hist: 1.6 };
@@ -277,7 +277,9 @@ function plannerHTML() {
     const donor = DONOR_STATES.includes(u.state);
     const lead = isT() ? `You ${f1(G.psh[id].T)}%, ${esc(tGapTxt(G.psh[id]))}` : esc(plainLeadSh(G.psh[id]));
     const btn = (a, v2, label, gain, dis) => `<button class="pl-act" data-a="${a}" data-v="${v2}" ${dis ? 'disabled' : ''}><b>${label}</b><span>${gain}</span></button>`;
+    const offBal = (P === 'D' && u.noD) || (P === 'T' && u.noT);
     h += `<div class="pl-sel"><div class="pl-st">${silhouette(id)}<span><b>${esc(unitName(u))}</b><span>${u.ev} EV · ${lead}${have.length ? ` · ${have.length} office${have.length > 1 ? 's' : ''} open` : ''}</span></span><button class="pl-x" data-a="plUnpick" aria-label="Close">✕</button></div>
+      ${offBal ? `<p class="hint" style="margin:0"><b>You're not on the ballot here.</b> Campaigning won't win you any votes in ${esc(u.name)}.</p>` : ''}
       <div class="pl-acts">
         ${btn('plRally', id, `Rally with ${esc(c.last)}`, `+${gainTxt(rallyPowF(u, nC, c))}${unit}`, candFull)}
         ${btn('plVp', id, `Send ${esc(v.last)}`, `+${gainTxt(rallyPowF(u, nV, v) * 0.55)}${unit}`, vpFull)}

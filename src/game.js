@@ -180,6 +180,9 @@ function setScen(key, party) {
   UNITS.forEach(u => {
     // With a live third candidate every state is contested three ways; otherwise all minor-party votes are a fixed slice.
     if (third) { if (u.locked) { u.ev += u.locked; u.locked = 0; } } else u.o = u.oth;
+    // Candidates who were not on a state's ballot get no votes there.
+    const off = third && third.offBallot ? third.offBallot : {};
+    u.noD = !!(off.D && off.D.includes(u.id)); u.noT = !!(off.T && off.T.includes(u.id));
     u.kids = []; u.state = u.parent || u.id; u.short = u.parent ? u.parent + '-' + u.id.slice(2) : u.id; U[u.id] = u;
   });
   UNITS.forEach(u => { if (u.parent) U[u.parent].kids.push(u.id); });
@@ -284,7 +287,10 @@ function drTrue(u) {
 }
 function drawOf(u) { const a = S.third.a[u.region]; return a === undefined ? 0.5 : a; }
 function mkShares(u, m, t) {
-  const pool = 100 - u.o - t; let d = (pool + m) / 2, r = (pool - m) / 2;
+  if (u.noT) t = 0;
+  const pool = 100 - u.o - t;
+  if (u.noD) return { D: 0, R: pool, T: t };
+  let d = (pool + m) / 2, r = (pool - m) / 2;
   if (d < 0.2) { d = 0.2; r = pool - 0.2; } else if (r < 0.2) { r = 0.2; d = pool - 0.2; }
   return { D: d, R: r, T: t };
 }
@@ -642,7 +648,7 @@ function visitWeights(view, vis) {
 function tVisitWeights() {
   const g = goal0(); const w = {}; let tv = 0; STATEWIDE.forEach(u => { tv += u.votes; });
   UNITS.forEach(u => {
-    if (!u.ev) { w[u.id] = 0; return; }
+    if (!u.ev || u.noT) { w[u.id] = 0; return; }
     const vis = Math.pow(0.75, G.visits.me[u.id] || 0), pw = visitPow(u, 0, { perk: '' });
     w[u.id] = (g.kind === 'house' || g.kind === 'ev' || g.kind === 'states') ? contestEV(u) * Math.exp(-Math.pow(G.polls[u.id] / 6, 2)) * vis * pw
       : pw * u.votes / tv * (0.6 + 0.4 * G.psh[u.id].T / Math.max(1, G.pn.T)) * vis;
