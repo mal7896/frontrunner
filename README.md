@@ -1,6 +1,6 @@
 # Front Runner
 
-Run for President of the US, from Labor Day to Election Night. Play it here: https://mal7896.github.io/frontrunner/**
+Run for President of the US, from Labor Day to Election Night. Play it here: https://mal7896.github.io/frontrunner/
 
 Front Runner is a presidential campaign game that runs in your browser, on a phone or a computer. Pick a candidate and a running mate, make the calls that come up each week, campaign across the map, and watch the returns come in state by state on Election Night.
 
