@@ -20,12 +20,12 @@ Your game saves in your browser, so you can close the tab and pick up where you 
 
 ## Running it locally
 
-`index.html` is the whole game in one file. The music lives in `audio/`.
+The playable site is in `docs/`: `docs/index.html` is the whole game in one file, and the music lives in `docs/audio/`.
 
-To play locally, serve the folder with any static web server, for example:
+To play locally, serve that folder with any static web server, for example:
 
 ```sh
-python3 -m http.server 8000
+python3 -m http.server 8000 --directory docs
 ```
 
 Then open http://localhost:8000.
@@ -41,7 +41,7 @@ The source is in `src/`:
 - `hist_data.js`: state results.
 - `style.css` and `body.html`: the page itself.
 
-After changing anything in `src/`, rebuild `index.html`:
+After changing anything in `src/`, rebuild `docs/index.html`:
 
 ```sh
 python3 src/build.py

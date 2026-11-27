@@ -1,11 +1,12 @@
-"""Builds ../index.html, a single self-contained page, from the files in this folder.
+"""Builds ../docs/index.html, a single self-contained page, from the files in this folder.
+GitHub Pages publishes the docs/ folder.
 
 Run from anywhere:  python3 src/build.py
 """
 import json, os
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-OUT = os.path.join(HERE, '..', 'index.html')
+OUT = os.path.join(HERE, '..', 'docs', 'index.html')
 SCRIPTS = ['data2028.js', 'hist_data.js', 'history.js', 'history2.js', 'history3.js', 'full.js']
 
 def read(name):
