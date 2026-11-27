@@ -1,0 +1,371 @@
+// ===================== THIRD-PARTY CAMPAIGNS =====================
+// Each race with a strong third candidate gets a `third` block. That candidate is always on the map:
+// as a computer-run campaign that follows its real polling path, or as the player's own campaign.
+//   start   national poll share at the first turn (percent)
+//   tide    how that share really moved after each turn (points); start + sum(tide) = real result
+//   a       share of the candidate's gains or losses that comes out of the Democrat's column, by region
+//   scale   converts a choice's effect into points of national support for this candidate
+//   q       how hard the two major parties squeeze the campaign each week (same units as choices)
+// Goals are checked on the final count. The first goal decides whether the campaign succeeded.
+const THIRD = {
+  1968: {
+    cand: { id: 'wallace', first: 'George', last: 'Wallace', ini: 'GW', title: 'Former Governor of Alabama', home: 'AL', perk: 'visits', perkText: 'Fiery stump speaker: every stop counts 25% more',
+      bio: 'Segregationist former governor of Alabama, running on law and order and anger at Washington.' },
+    vp: { id: 'lemay', first: 'Curtis', last: 'LeMay', ini: 'CL', title: 'Retired Air Force chief of staff', home: 'OH' },
+    label: 'American Independent', start: 20.5, scale: 2.0, q: .13,
+    tide: [1.0, .5, -.5, -1.2, -1.2, -2.0, -1.0, -.7, -1.0, -.87],
+    a: { NE: .62, MW: .62, SO: .35, WE: .5 },
+    blurb: 'You can also run as George Wallace and try to keep both men short of 270.',
+    note: 'George Wallace is on the ballot in every state. His support follows its real path, and when he gains or loses ground, the votes come out of Humphrey\'s and Nixon\'s columns.',
+    goals: [
+      { kind: 'house', text: 'Keep Nixon and Humphrey both under 270 and send the election to the House', short: 'deny both men 270', done: 'Neither major candidate reached 270.' },
+      { kind: 'ev', val: 47, text: 'Win more electoral votes than the 46 Wallace really won', short: 'win 47 electoral votes' },
+      { kind: 'pv', val: 15, text: 'Win 15 percent of the national vote', short: 'reach 15 percent' }],
+    level: 'Very hard',
+    actual: { pv: 13.53, ev: 46, states: 5, note: 'Wallace won 13.5 percent and carried Alabama, Arkansas, Georgia, Louisiana and Mississippi. A North Carolina elector pledged to Nixon also voted for him, for 46 in all. Nixon still reached 301.' },
+    turns: [
+      { date: '1968-09-02', cat: 'Labor Day', title: 'Where to spend September',
+        body: 'You\'re polling near 20 percent and drawing big crowds. You can lock down the Deep South first, or go north after blue-collar voters who are angry about crime and riots.',
+        options: [
+          { t: 'Take the campaign to factory towns in the North', s: 'the Northern swing', fx: { MW: .5, NE: .2, SO: -.05 }, h: true },
+          { t: 'Hold rallies across the Deep South first', s: 'the Southern rallies', fx: { SO: .55 } },
+          { t: 'Tell reporters there\'s not a dime\'s worth of difference between the two parties', s: 'the "dime\'s worth" line', fx: { nat: .25 } }],
+        hist: 'Wallace spent much of the fall outside the South, drawing large and often rowdy crowds in industrial cities. His stock line was that there wasn\'t a dime\'s worth of difference between the parties.' },
+      { date: '1968-09-16', cat: 'Protest', topic: 'the hecklers', title: 'Hecklers at every rally',
+        body: 'Protesters come to your rallies to shout you down. Your crowds cheer when you hit back, but the TV footage scares off some voters.',
+        options: [
+          { t: 'Hit back hard from the podium', s: 'hitting back', h: true, risk: { p: .55, win: { SO: .3, MW: .2, nat: .1 }, lose: { NE: -.3, MW: -.15, WE: -.15 }, winNote: 'The crowds roared and the clips ran everywhere.', loseNote: 'The coverage made your rallies look dangerous.' } },
+          { t: 'Tell your supporters to ignore them', s: 'ignoring them', fx: { nat: .1, NE: .1 } },
+          { t: 'Hold smaller events with tickets at the door', s: 'ticketed events', fx: { nat: -.05, SO: .15 } }],
+        hist: 'Wallace traded insults with hecklers at nearly every stop. His supporters loved it, and fights broke out at some rallies.' },
+      { date: '1968-09-30', cat: 'Vietnam', topic: 'the war', title: 'What to say about Vietnam',
+        body: 'Humphrey is about to break with President Johnson on the bombing. Your voters want the war over, and many want it won first.',
+        options: [
+          { t: 'Say you\'d let the generals win the war or bring the troops home', s: 'win or get out', fx: { SO: .25, MW: .15, WE: .1 }, h: true },
+          { t: 'Call for peace talks without conditions', s: 'peace talks', fx: { NE: .15, SO: -.2 } },
+          { t: 'Change the subject to crime at home', s: 'crime', fx: { nat: .1 } }],
+        hist: 'Wallace said that if the war could not be won quickly with conventional weapons, the troops should come home.' },
+      { date: '1968-10-03', cat: 'Running mate', topic: 'the running mate', title: 'Picking a running mate',
+        body: 'Former Georgia Gov. Marvin Griffin has been holding the spot on your ticket. You want a national name. Retired Air Force Gen. Curtis LeMay is willing, but he talks freely about bombing.',
+        options: [
+          { t: 'Name Curtis LeMay', s: 'LeMay', h: true, risk: { p: .3, win: { nat: .25, WE: .1 }, lose: { nat: -.35, NE: -.15, MW: -.1 }, winNote: 'LeMay\'s war record impressed voters worried about Vietnam.', loseNote: 'LeMay\'s comments about nuclear weapons dominated the coverage.' } },
+          { t: 'Name former Kentucky Gov. A. B. "Happy" Chandler', s: 'Chandler', fx: { MW: .15, nat: .1, SO: -.1 } },
+          { t: 'Keep Griffin on the ticket', s: 'keeping Griffin', fx: { SO: .2, nat: -.1 } }],
+        hist: 'Wallace named LeMay in Pittsburgh on Oct. 3. At the same press conference LeMay said he would be willing to use nuclear weapons, and Wallace had to step in to calm things down.' },
+      { date: '1968-10-09', cat: 'Unions', topic: 'union voters', title: 'The unions push back',
+        body: 'Union leaders are flooding factories with leaflets about Alabama\'s low wages. Many of their members liked you in September.',
+        options: [
+          { t: 'Say union leaders are out of touch with their own members', s: 'going around the leaders', fx: { MW: .25, NE: .1 } },
+          { t: 'Promise to protect union jobs and Social Security', s: 'the jobs promise', fx: { MW: .3, NE: .15 } },
+          { t: 'Ignore it and keep talking about crime', s: 'staying on crime', fx: { nat: .1, SO: .1, MW: -.15 } }],
+        hist: 'The AFL-CIO sent millions of pieces of anti-Wallace literature to union homes. His support among Northern union members fell sharply in October.' },
+      { date: '1968-10-15', cat: 'Ballot', topic: 'the Ohio ruling', title: 'The Supreme Court rules on Ohio',
+        body: 'The Supreme Court has ordered Ohio to put you on its ballot. It\'s a big state and a chance to show you\'re a national candidate.',
+        options: [
+          { t: 'Hold a victory rally in Ohio', s: 'the Ohio rally', fx: { MW: .4 } },
+          { t: 'Run ads about the two parties rigging the rules', s: 'the rigged-rules ads', fx: { nat: .25 } },
+          { t: 'Stay in the South, where the electoral votes are', s: 'the South', fx: { SO: .3 } }],
+        hist: 'On Oct. 15 the Supreme Court ruled in Williams v. Rhodes that Ohio had to let Wallace onto the ballot. He won about 12 percent there.' },
+      { date: '1968-10-21', cat: 'Money', topic: 'small donations', title: 'Small checks, a lot of them',
+        body: 'Donations keep pouring in, often a few dollars at a time. You can spend them on TV in Northern cities or on organizers in the border South.',
+        options: [
+          { t: 'Buy TV time in Northern cities', s: 'Northern TV', fx: { NE: .2, MW: .25 } },
+          { t: 'Organize in Tennessee, the Carolinas and Florida', s: 'the border South', fx: { SO: .4 } },
+          { t: 'Hold the money for the final week', s: 'saving it', fx: { nat: .05 } }],
+        hist: 'Wallace\'s campaign raised most of its money in small donations, and passed the bucket at rallies.' },
+      { date: '1968-10-24', cat: 'New York', topic: 'the Garden rally', title: 'Madison Square Garden',
+        body: 'Your campaign has booked Madison Square Garden. Thousands of protesters are expected outside.',
+        options: [
+          { t: 'Go ahead with the Garden rally', s: 'the Garden', h: true, risk: { p: .6, win: { NE: .35, nat: .15 }, lose: { NE: -.1, nat: -.15 }, winNote: 'The arena was packed and the pictures were huge.', loseNote: 'The fights outside got more airtime than the speech.' } },
+          { t: 'Move it to a smaller hall', s: 'a smaller hall', fx: { NE: .1 } },
+          { t: 'Cancel and spend the night in Alabama', s: 'canceling', fx: { SO: .15, nat: -.1 } }],
+        hist: 'About 20,000 people filled Madison Square Garden on Oct. 24, the biggest rally of Wallace\'s campaign, while protesters clashed with police outside.' },
+      { date: '1968-10-31', cat: 'Vietnam', topic: 'the bombing halt', title: 'The bombing halt',
+        body: 'President Johnson has announced a halt to the bombing of North Vietnam. Humphrey is gaining fast, and some of the gain is coming from your voters.',
+        options: [
+          { t: 'Call the halt a political stunt', s: 'calling it a stunt', fx: { SO: .2, nat: .1 } },
+          { t: 'Say you\'ll back anything that brings the troops home', s: 'backing it', fx: { nat: .05, NE: .1 } },
+          { t: 'Tell union voters Humphrey hasn\'t changed', s: 'the union appeal', fx: { MW: .3, NE: .05 } }],
+        hist: 'Johnson announced the bombing halt on Oct. 31. In the last days Wallace kept losing union Democrats as they went back to Humphrey.' },
+      { date: '1968-11-04', cat: 'Closing argument', title: 'Election eve',
+        body: 'One day left. You\'re strong in the Deep South and within reach in Tennessee and the Carolinas. A handful of states could keep Nixon from a majority.',
+        options: [
+          { t: 'Last rallies in Tennessee and North Carolina', s: 'the border states', fx: { SO: .4 } },
+          { t: 'Tell voters a Wallace vote makes both parties come to the table', s: 'the bargaining pitch', fx: { SO: .2, MW: .1 } },
+          { t: 'Buy a final half hour of TV on law and order', s: 'the TV appeal', fx: { nat: .2 } }],
+        hist: 'Wallace finished with 13.5 percent and carried five Deep South states. He came within a few points of Nixon in Tennessee and the Carolinas.' }
+    ]
+  },
+
+  1980: {
+    cand: { id: 'anderson', first: 'John B.', last: 'Anderson', ini: 'JA', title: 'U.S. Representative from Illinois', home: 'IL', perk: 'steady', perkText: 'Disciplined campaign: risky moves backfire less often',
+      bio: 'Ten-term Republican congressman who left the party after the primaries and is running as an independent.' },
+    vp: { id: 'lucey', first: 'Patrick', last: 'Lucey', ini: 'PL', title: 'Former Governor of Wisconsin', home: 'WI' },
+    label: 'Independent', start: 15.0, scale: 2.0, q: .12,
+    tide: [.5, -2.5, -1.5, -1.2, -1.0, -.6, -.8, -.5, -.3, -.49],
+    a: { NE: .6, MW: .55, SO: .5, WE: .55 },
+    blurb: 'You can also run as John Anderson, the independent.',
+    note: 'Independent John Anderson is on the ballot too. His support follows its real path, and when he gains or loses ground, the votes come out of Carter\'s and Reagan\'s columns.',
+    goals: [
+      { kind: 'pv', val: 5, text: 'Win 5 percent, so the campaign qualifies for federal money after the election', short: 'reach 5 percent' },
+      { kind: 'pv', val: 8, text: 'Win 8 percent of the national vote', short: 'reach 8 percent' },
+      { kind: 'stateN', val: 20, n: 1, text: 'Win 20 percent in at least one state', short: 'win 20 percent in a state' }],
+    level: 'Likely',
+    actual: { pv: 6.61, ev: 0, states: 0, note: 'Anderson won 6.6 percent. His best states were Massachusetts, Vermont and Rhode Island, at about 15 percent each. Clearing 5 percent earned him about $4 million in federal money after the election.' },
+    turns: [
+      { date: '1980-09-01', cat: 'Labor Day', title: 'An independent in September',
+        body: 'You and your running mate, former Wisconsin Gov. Patrick Lucey, are polling around 15 percent. Banks won\'t lend you money until it\'s clear you\'ll get federal funds after the election.',
+        options: [
+          { t: 'Spend what you have on TV now, while people are paying attention', s: 'early TV', fx: { nat: .3 } },
+          { t: 'Campaign on college campuses', s: 'the campuses', fx: { NE: .25, WE: .2 }, h: true },
+          { t: 'Court moderate Republicans in the Northeastern suburbs', s: 'the suburbs', fx: { NE: .4 } }],
+        hist: 'Anderson drew his biggest crowds on college campuses. In early September the Federal Election Commission ruled he could get federal money after the election if he won 5 percent, but banks still wouldn\'t lend against it.' },
+      { date: '1980-09-21', kind: 'debate', cat: 'The Baltimore debate', debName: 'Baltimore', need: 15, opp: ['R'],
+        q: 'This is the debate in Baltimore. President Carter refused to come. How would you bring down inflation without throwing people out of work?', fit: 'plan',
+        hist: 'The League of Women Voters invited Anderson because he had reached about 15 percent. Carter stayed away. Reagan held his own, and Anderson\'s numbers began to slide.',
+        alt: { cat: 'Debates', topic: 'the debate', title: 'Left off the stage',
+          body: 'The League of Women Voters wanted candidates at 15 percent or better, and your numbers came in short. Reagan will be on stage alone with the moderators, or not at all.',
+          options: [
+            { t: 'Hold a rally across town during the debate', s: 'the rally', fx: { NE: .2 } },
+            { t: 'Demand a place on the stage', s: 'the protest', fx: { nat: .1 } },
+            { t: 'Buy a half hour of TV the same night', s: 'the TV half hour', fx: { nat: .2 } }],
+          hist: 'In real life Anderson reached the 15 percent mark and debated Reagan in Baltimore on Sept. 21 while Carter stayed away.' } },
+      { date: '1980-09-29', cat: 'Wasted vote', topic: 'the wasted-vote argument', title: '"A vote for Reagan"',
+        body: 'Carter\'s campaign is telling liberals that a vote for you is really a vote for Reagan. Some of your supporters are listening.',
+        options: [
+          { t: 'Say the only wasted vote is one you don\'t believe in', s: 'the conscience argument', fx: { nat: .2 } },
+          { t: 'Go after Carter\'s record on inflation', s: 'attacking Carter', fx: { NE: .15, MW: .15, nat: .05 } },
+          { t: 'Call Reagan\'s tax cut a fantasy', s: 'attacking Reagan', fx: { NE: .2, WE: .1 } }],
+        hist: 'Carter\'s campaign pressed the case that Anderson voters were helping Reagan, and many liberal supporters drifted back to Carter in October.' },
+      { date: '1980-10-08', cat: 'Money', topic: 'money', title: 'Running short of money',
+        body: 'Without bank loans, you can\'t afford a full national ad campaign. You need to decide where every dollar goes.',
+        options: [
+          { t: 'Spend it all on TV in a few Northeastern states', s: 'the Northeast ads', fx: { NE: .4 } },
+          { t: 'Skip the ads and hold rallies', s: 'the rallies', fx: { nat: .1, MW: .1 } },
+          { t: 'Ask supporters to lend money, to be repaid from federal funds', s: 'the supporter loans', risk: { p: .5, win: { nat: .35 }, lose: { nat: -.1 }, winNote: 'The loans came through and the ads went up.', loseNote: 'Not enough money came in, and the plan made news for the wrong reasons.' } }],
+        hist: 'Short of cash, the Anderson campaign could buy only a fraction of the TV time the major parties bought.' },
+      { date: '1980-10-14', cat: 'Energy', topic: 'the gas tax', title: 'The 50-cent gas tax',
+        body: 'You\'ve proposed a 50-cent-a-gallon gasoline tax, with the money handed back through lower Social Security taxes. Your opponents say you want to raise prices at the pump.',
+        options: [
+          { t: 'Defend it as the honest answer on energy', s: 'defending the gas tax', fx: { NE: .2, nat: .05, SO: -.1, WE: -.1 }, h: true },
+          { t: 'Play it down and talk about jobs', s: 'talking jobs', fx: { MW: .2 } },
+          { t: 'Drop the idea', s: 'dropping it', fx: { MW: .1, nat: -.05 } }],
+        hist: 'Anderson stood by his 50-cent gas tax. Editorial writers praised it, and few voters warmed to it.' },
+      { date: '1980-10-21', cat: 'Endorsements', topic: 'endorsements', title: 'The newspapers decide',
+        body: 'Several big newspapers like you but doubt you can win. Your aides think a few endorsements could stop the slide.',
+        options: [
+          { t: 'Meet with editorial boards in the big Northeastern cities', s: 'the editorial boards', fx: { NE: .3 } },
+          { t: 'Do a long interview on national TV', s: 'the TV interview', fx: { nat: .2 } },
+          { t: 'Send Lucey to the Midwest while you take the coasts', s: 'splitting up', fx: { MW: .2, WE: .15 } }],
+        hist: 'Anderson won a few endorsements, but most papers chose Carter or Reagan, and his support kept falling through October.' },
+      { date: '1980-10-28', kind: 'debate', cat: 'The Cleveland debate', debName: 'Cleveland', need: 15, opp: ['D', 'R'],
+        q: 'This is the debate in Cleveland, the only one with all three candidates. Are Americans better off than they were four years ago?', fit: 'attack',
+        hist: 'In real life Anderson had dropped well under 15 percent and was not invited to Cleveland.',
+        alt: { cat: 'Debates', topic: 'the Cleveland debate', title: 'Shut out in Cleveland',
+          body: 'You\'ve fallen under 15 percent, so Carter and Reagan will debate without you tonight. A new cable network has offered to air you answering the same questions.',
+          options: [
+            { t: 'Answer the same questions live on cable', s: 'the cable debate', fx: { nat: .15 }, h: true },
+            { t: 'Hold a rally across town', s: 'the rally', fx: { MW: .2 } },
+            { t: 'Buy a half hour on network TV the night before', s: 'the TV half hour', fx: { nat: .2, NE: .05 } }],
+          hist: 'Anderson was not invited to the Oct. 28 debate. CNN, then a new cable network, aired him answering the same questions from a studio in Washington.' } },
+      { date: '1980-10-31', cat: 'Final weekend', topic: 'the final weekend', title: 'Where to finish',
+        body: 'You have one weekend of campaigning left and money for one region.',
+        options: [
+          { t: 'The Northeast, where you\'re strongest', s: 'the Northeast', fx: { NE: .4 } },
+          { t: 'Big states like California and Illinois', s: 'the big states', fx: { WE: .2, MW: .25 } },
+          { t: 'College towns in every region', s: 'the college towns', fx: { nat: .15, NE: .05 } }],
+        hist: 'Anderson spent the last days mostly in the Northeast and the Great Lakes states.' },
+      { date: '1980-11-02', cat: 'Iran', topic: 'the hostages', title: 'News from Tehran',
+        body: 'Iran\'s parliament has set conditions for releasing the 52 American hostages. Every network is leading with it.',
+        options: [
+          { t: 'Say this is no time for politics and stay quiet', s: 'staying quiet', fx: { nat: .1 } },
+          { t: 'Say both candidates are playing politics with it', s: 'blaming both', fx: { nat: .05, NE: .05 } },
+          { t: 'Talk about energy independence instead', s: 'energy', fx: { NE: .1, WE: .1 } }],
+        hist: 'On Nov. 2 Iran\'s parliament set terms for the hostages\' release. The news reminded voters of the crisis, and the race broke toward Reagan.' },
+      { date: '1980-11-03', cat: 'Closing argument', title: 'Election eve',
+        body: 'Your supporters know you probably can\'t win. The question is what you ask them to vote for.',
+        options: [
+          { t: 'Ask them to send a message to both parties', s: 'the message vote', fx: { nat: .2 } },
+          { t: 'Say a big vote now builds a lasting new movement', s: 'the movement pitch', fx: { nat: .15, NE: .1 } },
+          { t: 'Make a last appeal to Republicans who can\'t stand Reagan', s: 'the Republican appeal', fx: { MW: .15, NE: .15 } }],
+        hist: 'Anderson finished with 6.6 percent, enough to qualify for about $4 million in federal money after the election.' }
+    ]
+  },
+
+  1992: {
+    cand: { id: 'perot', first: 'Ross', last: 'Perot', ini: 'RP', title: 'Texas businessman', home: 'TX', perk: 'debate', perkText: 'Plain-spoken debater: bigger wins in debates',
+      bio: 'Billionaire founder of Electronic Data Systems, paying for his own campaign.' },
+    vp: { id: 'stockdale', first: 'James', last: 'Stockdale', ini: 'JS', title: 'Retired Navy vice admiral', home: 'CA' },
+    label: 'Independent', start: 7.0, scale: 2.0, q: .14, onStage: true,
+    tide: [0, .5, 1.5, 1.5, 3.0, -.5, 3.0, -1.0, 2.0, 1.91],
+    a: { NE: .5, MW: .5, SO: .48, WE: .5 },
+    blurb: 'You can also run as Ross Perot, who quit in July and came back in October.',
+    note: 'Ross Perot is on the ballot in all 50 states. His support follows its real path, and when he gains or loses ground, the votes come out of Clinton\'s and Bush\'s columns, roughly evenly.',
+    goals: [
+      { kind: 'pv', val: 20, text: 'Win 20 percent of the national vote', short: 'reach 20 percent' },
+      { kind: 'stateN', val: 30, n: 3, text: 'Win 30 percent in at least three states', short: 'win 30 percent in three states' },
+      { kind: 'states', val: 1, text: 'Carry a state', short: 'carry a state' }],
+    level: 'Even',
+    actual: { pv: 18.91, ev: 0, states: 0, note: 'Perot won 18.9 percent, the best showing by a candidate outside the two major parties since Theodore Roosevelt in 1912. He carried no states but finished second in Maine and Utah.' },
+    turns: [
+      { date: '1992-09-07', cat: 'Labor Day', title: 'Out of the race, still on the ballot',
+        body: 'You quit the race in July, but your volunteers kept going, and you\'ll be on the ballot in all 50 states. Many of your old supporters are angry that you quit.',
+        options: [
+          { t: 'Keep both parties guessing', s: 'keeping them guessing', fx: { nat: .15 }, h: true },
+          { t: 'Tell your volunteers you\'re thinking about getting back in', s: 'the hint', risk: { p: .55, win: { nat: .35 }, lose: { nat: -.1 }, winNote: 'The volunteers lit up the phone banks.', loseNote: 'Reporters treated it as one more flip-flop.' } },
+          { t: 'Put out your deficit plan as a book', s: 'the book', fx: { nat: .2 } }],
+        hist: 'Perot kept his options open through September. His plan to cut the deficit came out as a paperback book, "United We Stand," and became a bestseller.' },
+      { date: '1992-09-28', cat: 'The campaigns', topic: 'the Dallas meetings', title: 'Both parties come to Dallas',
+        body: 'Senior officials from the Bush and Clinton campaigns are flying to Dallas to make their case to you and your volunteers.',
+        options: [
+          { t: 'Grill them both on the deficit, in front of the cameras', s: 'grilling them', fx: { nat: .25 }, h: true },
+          { t: 'Refuse to meet them', s: 'refusing', fx: { nat: .05 } },
+          { t: 'Meet privately and say nothing afterward', s: 'meeting privately', fx: { nat: .1 } }],
+        hist: 'On Sept. 28 both campaigns sent senior officials to Dallas to brief Perot and his volunteers, which kept him at the center of the news.' },
+      { date: '1992-10-01', cat: 'Re-entry', topic: 'the comeback', title: 'Getting back in',
+        body: 'Your volunteers want you back. If you re-enter now, you\'ll be in the debates.',
+        options: [
+          { t: 'Re-enter today and pay for the TV time yourself', s: 're-entering now', fx: { nat: .4 }, h: true },
+          { t: 'Re-enter with an apology for quitting', s: 'the apology', fx: { nat: .3, NE: .05 } },
+          { t: 'Wait another week to build suspense', s: 'waiting', risk: { p: .4, win: { nat: .45 }, lose: { nat: -.15 }, winNote: 'The wait made your return the story of the week.', loseNote: 'The networks got tired of waiting.' } }],
+        hist: 'Perot re-entered on Oct. 1, saying the parties still had not dealt with the deficit.' },
+      { date: '1992-10-06', cat: 'TV', topic: 'the TV half hours', title: 'Half-hours on network TV',
+        body: 'You can afford ads like nobody else in the race. The question is what kind.',
+        options: [
+          { t: 'Buy 30 minutes of prime time and explain the debt with charts', s: 'the half hours', fx: { nat: .45 }, h: true },
+          { t: 'Run ordinary 30-second ads', s: 'regular ads', fx: { nat: .2 } },
+          { t: 'Spend it on rallies instead', s: 'rallies', fx: { nat: .1, WE: .1 } }],
+        hist: 'Perot bought half-hour blocks of network time and walked viewers through charts on the debt. Millions watched, and some of the programs drew bigger audiences than regular shows.' },
+      { date: '1992-10-11', kind: 'debate', cat: 'First debate', debName: 'first', opp: ['D', 'R'],
+        q: 'This is the first debate, in St. Louis. You have never held public office. Why should voters trust you with the economy?', fit: 'plan',
+        hist: 'In St. Louis, Perot\'s plain talk and one-liners got some of the biggest laughs of the night, and his poll numbers began to climb.' },
+      { date: '1992-10-13', cat: 'Running mates', topic: 'Stockdale', title: 'Stockdale\'s debate',
+        body: 'Your running mate, retired Adm. James Stockdale, faces Al Gore and Dan Quayle tonight. He has had almost no time to prepare.',
+        options: [
+          { t: 'Let Stockdale introduce himself as an outsider, in his own words', s: 'Stockdale\'s own words', h: true, risk: { p: .3, win: { nat: .2 }, lose: { nat: -.35 }, winNote: 'His Vietnam story moved people.', loseNote: 'He lost the thread, and the clips were brutal.' } },
+          { t: 'Have him stick to the deficit plan', s: 'the deficit plan', fx: { nat: .1 } },
+          { t: 'Cram with him all day on policy', s: 'the cram session', fx: { nat: .15 } }],
+        hist: 'Stockdale opened with "Who am I? Why am I here?" He meant it as an introduction, but he struggled later in the night and was widely mocked.' },
+      { date: '1992-10-15', kind: 'debate', cat: 'Town-hall debate', debName: 'town-hall', opp: ['D', 'R'],
+        q: 'This is the town-hall debate in Richmond. A woman in the audience asks how the national debt has affected each of you personally.', fit: 'story',
+        hist: 'By the end of the debates, Perot\'s support had roughly doubled from where it stood when he re-entered.' },
+      { date: '1992-10-25', cat: 'The interview', topic: 'why you quit', title: 'Why did you quit?',
+        body: 'A TV interviewer asks why you dropped out in July. You believe Republicans were planning to disrupt your daughter\'s wedding.',
+        options: [
+          { t: 'Tell the whole story', s: 'telling the story', h: true, risk: { p: .25, win: { nat: .15 }, lose: { nat: -.55 }, winNote: 'Viewers took it as candor.', loseNote: 'With no proof, it sounded paranoid.' } },
+          { t: 'Say quitting was a mistake and move on', s: 'owning it', fx: { nat: .15 } },
+          { t: 'Refuse to talk about July', s: 'refusing', fx: { nat: -.05 } }],
+        hist: 'On Oct. 25 Perot told "60 Minutes" he had quit because of a Republican plan to disrupt his daughter\'s wedding. He offered no proof, and the claim hurt him.' },
+      { date: '1992-10-30', cat: 'Advertising', topic: 'the final ads', title: 'The final ads',
+        body: 'You still have money to spend, and a week to spend it.',
+        options: [
+          { t: 'More half hours on the debt', s: 'more half hours', fx: { nat: .3 } },
+          { t: 'Ads on Bush and the economy', s: 'the Bush ads', fx: { nat: .2, MW: .1 } },
+          { t: 'Ads questioning Clinton\'s character', s: 'the Clinton ads', fx: { nat: .2, SO: .1 } }],
+        hist: 'Perot spent more than $60 million of his own money, much of it on TV in the final weeks.' },
+      { date: '1992-11-02', cat: 'Closing argument', title: 'The last day',
+        body: 'Your volunteers want one more big push. Your support is strongest in the West and in New England.',
+        options: [
+          { t: 'A final half hour on all three networks', s: 'the final half hour', fx: { nat: .25 } },
+          { t: 'Barnstorm the Western states', s: 'the West', fx: { WE: .45 } },
+          { t: 'A rally in Dallas with your volunteers', s: 'the Dallas rally', fx: { nat: .15, SO: .15 } }],
+        hist: 'Perot won 18.9 percent, the best showing by a candidate outside the two major parties since 1912. He finished second in Maine and Utah.' }
+    ]
+  },
+
+  2000: {
+    cand: { id: 'nader', first: 'Ralph', last: 'Nader', ini: 'RN', title: 'Consumer advocate', home: 'CT', perk: 'visits', perkText: 'Fills arenas: every stop counts 25% more',
+      bio: 'Consumer advocate who made his name taking on the auto industry over car safety. Green Party nominee.' },
+    vp: { id: 'laduke', first: 'Winona', last: 'LaDuke', ini: 'WL', title: 'Environmental activist from Minnesota', home: 'MN' },
+    label: 'Green', start: 4.0, scale: 2.0, q: .15,
+    tide: [.2, -.2, -.2, .1, .2, -.1, .2, -.4, -.4, -.66],
+    a: { NE: .7, MW: .7, SO: .66, WE: .7 },
+    blurb: 'You can also run as Ralph Nader, the Green Party nominee.',
+    note: 'Green Party nominee Ralph Nader is on the ballot in most states. His support follows its real path. Most of the votes he gains or loses come out of Gore\'s column.',
+    goals: [
+      { kind: 'pv', val: 5, text: 'Win 5 percent, so the Green Party qualifies for federal money in 2004', short: 'reach 5 percent' },
+      { kind: 'stateN', val: 10, n: 3, text: 'Win at least 10 percent in three states', short: 'win 10 percent in three states' },
+      { kind: 'stateN', val: 5, n: 15, text: 'Win at least 5 percent in 15 states', short: 'win 5 percent in 15 states' }],
+    level: 'Very hard',
+    actual: { pv: 2.74, ev: 0, states: 0, note: 'Nader won 2.7 percent, short of the 5 percent the Greens needed. His best state was Alaska, at 10 percent. In Florida he won about 97,000 votes; Bush carried it by 537.' },
+    turns: [
+      { date: '2000-09-04', cat: 'Labor Day', title: 'Four percent and climbing?',
+        body: 'You\'re polling around 4 percent. If you reach 5 percent on Election Day, the Green Party qualifies for federal campaign money in 2004.',
+        options: [
+          { t: 'Hold big paid-admission rallies in arenas', s: 'the arena rallies', fx: { nat: .3, WE: .1 }, h: true },
+          { t: 'Tour college campuses', s: 'the campuses', fx: { nat: .2, NE: .1, WE: .1 } },
+          { t: 'Concentrate on your best states: Alaska, Vermont, Oregon', s: 'your best states', fx: { WE: .3, NE: .15 } }],
+        hist: 'Nader filled arenas with paid-admission "super rallies," several of them drawing more than 10,000 people.' },
+      { date: '2000-09-12', cat: 'Message', topic: 'corporate money', title: 'What the campaign is about',
+        body: 'Reporters keep asking what you\'d do differently from Gore. You need one message that sticks.',
+        options: [
+          { t: 'Corporate money owns both parties', s: 'corporate money', fx: { nat: .25 }, h: true },
+          { t: 'The environment and climate change', s: 'the environment', fx: { WE: .25, NE: .1 } },
+          { t: 'Trade deals and factory jobs', s: 'trade', fx: { MW: .3 } }],
+        hist: 'Nader\'s central argument was that corporate money controlled both major parties.' },
+      { date: '2000-09-26', cat: 'Ballot', topic: 'ballot access', title: 'Write-in states',
+        body: 'You\'re on the ballot in 43 states and D.C. In a few others, voters can only write your name in, and in three there\'s no way to vote for you at all.',
+        options: [
+          { t: 'Run ads teaching people how to write you in', s: 'the write-in ads', fx: { nat: .1, SO: .05 } },
+          { t: 'Put the money into states where you\'re on the ballot', s: 'the ballot states', fx: { nat: .2 } },
+          { t: 'Sue over the ballot rules', s: 'the lawsuits', fx: { nat: .05 } }],
+        hist: 'Nader made the ballot in 43 states and D.C. Georgia, Idaho, Indiana and Wyoming allowed only write-ins, and North Carolina, Oklahoma and South Dakota had no way to vote for him.' },
+      { date: '2000-10-03', kind: 'debate', cat: 'First debate', debName: 'first', need: 15, opp: ['D', 'R'],
+        q: 'This is the first debate, in Boston. The race is close. Why should anyone vote for a third party this year?', fit: 'attack',
+        hist: 'In real life Nader was far below the 15 percent the debate commission required.',
+        alt: { cat: 'Debates', topic: 'the debate', title: 'Shut out in Boston',
+          body: 'You\'re far below the 15 percent the debate commission requires. A supporter has given you a ticket to watch the debate on a screen in a hall nearby.',
+          options: [
+            { t: 'Show up with the ticket', s: 'showing up', h: true, risk: { p: .55, win: { nat: .3, NE: .1 }, lose: { nat: .05 }, winNote: 'Getting turned away at the door was the best coverage you had all week.', loseNote: 'The cameras were all inside.' } },
+            { t: 'Hold a rally across town', s: 'the rally', fx: { NE: .2 } },
+            { t: 'Answer the questions live on the internet', s: 'the webcast', fx: { nat: .1, WE: .05 } }],
+          hist: 'On Oct. 3 Nader arrived at the Boston debate with a ticket to watch it on a screen nearby and was turned away by state troopers. He later sued over it.' } },
+      { date: '2000-10-13', cat: 'New York', topic: 'the Garden rally', title: 'Madison Square Garden',
+        body: 'Your campaign can book Madison Square Garden. It would be the biggest event of the campaign, if you can fill it.',
+        options: [
+          { t: 'Sell out the Garden with famous speakers', s: 'the Garden', h: true, risk: { p: .7, win: { nat: .3, NE: .2 }, lose: { NE: -.05, nat: -.1 }, winNote: 'A packed arena of people who paid to be there.', loseNote: 'Rows of empty seats made the news.' } },
+          { t: 'Hold a free rally in a park', s: 'the park rally', fx: { NE: .25 } },
+          { t: 'Spend the money on TV instead', s: 'TV ads', fx: { nat: .15 } }],
+        hist: 'About 15,000 people paid $20 each to hear Nader at Madison Square Garden, the biggest rally of his campaign.' },
+      { date: '2000-10-17', kind: 'debate', cat: 'Final debate', debName: 'final', need: 15, opp: ['D', 'R'],
+        q: 'This is the town-hall debate in St. Louis. A voter asks what you would do about the cost of health insurance.', fit: 'plan',
+        hist: 'In real life Nader was again left out of the final debate in St. Louis.',
+        alt: { cat: 'Debates', topic: 'the debates', title: 'Another debate without you',
+          body: 'Bush and Gore meet in St. Louis tonight. Again you aren\'t invited.',
+          options: [
+            { t: 'Hold a rally with your own "debate" on the same issues', s: 'the counter-debate', fx: { nat: .15 } },
+            { t: 'Spend the night on talk radio', s: 'talk radio', fx: { MW: .15, nat: .05 } },
+            { t: 'Ignore it and campaign in the West', s: 'the West', fx: { WE: .25 } }],
+          hist: 'Nader was left out of all three presidential debates.' } },
+      { date: '2000-10-21', cat: 'Spoiler', topic: 'the spoiler charge', title: 'Your old allies ask you to quit',
+        body: 'Some of your former staff have written an open letter asking you to drop out so Gore can beat Bush.',
+        options: [
+          { t: 'Say the two parties are too much alike to matter', s: 'no difference', fx: { nat: .15, NE: -.05 }, h: true },
+          { t: 'Tell supporters in close states to vote their conscience', s: 'conscience', fx: { nat: .1 } },
+          { t: 'Spend the last weeks in safe states like New York and California', s: 'the safe states', fx: { NE: .2, WE: .25 } }],
+        hist: 'On Oct. 21 a group of his former staff, calling themselves "Nader\'s Raiders for Gore," urged him to quit. He refused.' },
+      { date: '2000-10-27', cat: 'Gore', topic: 'Gore\'s push', title: 'Gore comes after your voters',
+        body: 'Gore\'s allies, including environmental groups, are pushing hard to win back your supporters.',
+        options: [
+          { t: 'Go after Gore\'s environmental record', s: 'Gore\'s record', fx: { WE: .2, NE: .1 } },
+          { t: 'Debate Gore\'s allies on TV', s: 'the TV debates', fx: { nat: .15 } },
+          { t: 'Leave Gore alone and focus on Bush', s: 'Bush', fx: { nat: .05, MW: .1 } }],
+        hist: 'In the final week the Sierra Club and other Gore allies urged Nader voters to come home. His support slipped.' },
+      { date: '2000-11-02', cat: 'Final weekend', topic: 'the final weekend', title: 'Where to finish',
+        body: 'Some advisers want you in safe states, where your voters can back you without fear of electing Bush. Others want you where the race is close.',
+        options: [
+          { t: 'Florida and Pennsylvania, where the race is close', s: 'the close states', fx: { SO: .1, MW: .1 }, h: true },
+          { t: 'California and New York', s: 'the big safe states', fx: { WE: .25, NE: .25 } },
+          { t: 'Alaska, Vermont and the Northwest', s: 'your best states', fx: { WE: .2, NE: .1 } }],
+        hist: 'Nader spent much of the last stretch in close states such as Pennsylvania and Florida, against the advice of some of his own allies.' },
+      { date: '2000-11-06', cat: 'Closing argument', title: 'One day left',
+        body: 'Five percent is still within reach if your supporters turn out.',
+        options: [
+          { t: 'Ask for every vote to get the Greens to 5 percent', s: 'the 5 percent pitch', fx: { nat: .25 } },
+          { t: 'Final rallies on the West Coast', s: 'the West Coast', fx: { WE: .35 } },
+          { t: 'Remind voters that Gore and Bush both take corporate money', s: 'the corporate-money pitch', fx: { nat: .15 } }],
+        hist: 'Nader finished with 2.7 percent, short of the 5 percent the Greens needed. In Florida he won about 97,000 votes; Bush carried the state by 537.' }
+    ]
+  }
+};
+for (const y in THIRD) HISTORY[y].third = THIRD[y];
